@@ -1,10 +1,12 @@
 const express = require('express'); 
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 const Marsupilami = require('../models/Marsupilami'); 
-const route = express.Router(); 
+const route = express.Router();
+const verifyConnection = require('./verifyToken'); 
+
 
 //CREATE MARSUPILAMI
-route.post('/AddMarsupilami', async(req,res)=>{
+route.post('/AddMarsupilami',verifyConnection, async(req,res)=>{
     const{name, family, food, race, age} = req.body; 
     let marsupilami = {};
     marsupilami.name = name; 
@@ -22,7 +24,7 @@ route.post('/AddMarsupilami', async(req,res)=>{
 });
 
 //GET BACK ALL MARSUPILAMI
-route.get('/showMarsupilami', async (rep, res) => {
+route.get('/showMarsupilami',verifyConnection, async (rep, res) => {
     try {
         const marsupilamifriends = await Marsupilami.find(); 
         res.json(marsupilamifriends); 
@@ -32,7 +34,7 @@ route.get('/showMarsupilami', async (rep, res) => {
 });
 
 //GET ONE MARSUPILAMI BY ID
-route.get('/delMarsu/:marsupilamiId', async(req, res) =>{
+route.get('/getOneMarsu/:marsupilamiId',verifyConnection, async(req, res) =>{
     try {
     const marsupilamifind = await Marsupilami.findById(req.params.marsupilamiId);
     res.json(marsupilamifind);
@@ -42,7 +44,7 @@ route.get('/delMarsu/:marsupilamiId', async(req, res) =>{
 });
 
 //UPDATE MARSUPILAMI
-route.put('/updateMarsu/:UpdateMarsupilami', (req, res, next) => {
+route.put('/updateMarsu/:UpdateMarsupilami',verifyConnection, (req, res, next) => {
     const marsupilamiUpdate = new Marsupilami({
       _id: req.params.UpdateMarsupilami,
       name: req.body.name,
@@ -67,7 +69,7 @@ route.put('/updateMarsu/:UpdateMarsupilami', (req, res, next) => {
   });
 
 //DELETE MASRUPILAMI
-route.delete('/deleteMarsu/:marsupilamiId', async(req, res) =>{
+route.delete('/deleteMarsu/:marsupilamiId',verifyConnection, async(req, res) =>{
     try {
         const  removeMarsupilami =  await Marsupilami.remove({_id: req.params.marsupilamiId});
         res.json(removeMarsupilami); 
